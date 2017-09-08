@@ -69,6 +69,9 @@ public class ColorDialog extends JDialog {
 		
 		JPanel hsvPanel = createHSVPanel(result, imageWidths);
 		tabbedPane.addTab("HSV", hsvPanel);
+
+		JPanel yCbCrPanel = createYCbCrPanel(result, imageWidths);
+		tabbedPane.addTab("YCbCr", yCbCrPanel);
 		
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
@@ -117,6 +120,12 @@ public class ColorDialog extends JDialog {
 	}
 	
 	private JPanel createCMYKPanel(ColorDialogResult result, int imageWidths) {	
+		JPanel panel = new JPanel();
+		
+		return panel;
+	}
+
+	private JPanel createYCbCrPanel(ColorDialogResult result, int imageWidths) {	
 		JPanel panel = new JPanel();
 		
 		return panel;
