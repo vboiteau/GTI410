@@ -16,6 +16,7 @@
 package model;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 /**
  * <p>Title: Pixel</p>
@@ -30,7 +31,6 @@ public class Pixel {
     private int valueARGB;
     
     /**
-     * Pixel default constructor
      */
     public Pixel() {
 		valueARGB = 0;
@@ -104,7 +104,116 @@ public class Pixel {
     public int getBlue() { 
     	return ((valueARGB) & 0xff); 
     }
-    
+
+    public int getRGBMaxIndex() {
+        ArrayList<Integer> RGB = new ArrayList<Integer>();
+        RGB.add(getRed());
+        RGB.add(getGreen());
+        RGB.add(getBlue());
+        return RGB.indexOf(getRGBMax());
+    }
+
+    public int getRGBMin() {
+        return Math.min(Math.min(getRed(), getGreen()), getBlue());
+    }
+
+    public int getRGBMax() {
+        return Math.max(getRed(), getGreen());
+    }
+
+    public int getRGBCoverage() {
+        return getRGBMax() - getRGBMin();
+    }
+
+    public float getHueModificatorFromRGB() {
+        float mod;
+        System.out.println(getRGBMaxIndex());
+        switch (getRGBMaxIndex()) {
+            case 0:
+                mod = ((getGreen() - getBlue()) / getRGBCoverage()) % 6;
+                break;
+            case 1:
+                mod = (getBlue() - getRed()) / getRGBCoverage() + 2;
+                break;
+            case 2:
+            default:
+                mod = (getRed() - getGreen()) / getRGBCoverage() + 4;
+                break;
+        }
+        return mod;
+    }
+
+    public int getHue() {
+        int C = getRGBCoverage();
+        if (C > 0) {
+            return Math.round(getHueModificatorFromRGB() * 60);
+        }
+        return C;
+    }
+
+    public float getSaturation() {
+        int coverage = getRGBCoverage();
+        if (coverage > 0) {
+            return (float)coverage / (float)getRGBMax();
+        }
+        return coverage;
+    }
+
+    public float getValue() {
+        return (float)getRGBMax() / (float)255;
+    }
+
+    public float[] getRGBModFromHSV(int hue, float saturation, float value) {
+        float C =  value * saturation;
+
+        float X = C * (1 - Math.abs(((float)hue / (float)60)%2 - 1));
+        float[] mod = new float[]{0, 0, 0};
+        switch((int)Math.floor(((float)hue / (float)60))) {
+            case 0:
+                mod[0] = C;
+                mod[1] = X;
+                break;
+            case 1:
+                mod[1] = C;
+                mod[0] = X;
+                break;
+            case 2:
+                mod[1] = C;
+                mod[2] = X;
+                break;
+            case 3:
+                mod[2] = C;
+                mod[1] = X;
+                break;
+            case 4:
+                mod[0] = X;
+                mod[2] = C;
+                break;
+            case 5:
+            default:
+                mod[0] = C;
+                mod[2] = X;
+                break;
+        }
+        return mod;
+    }
+
+    public void setHSV(int hue, float saturation, float value) {
+        float C = value * saturation;
+        float[] rgbModFromHSV = getRGBModFromHSV(hue, saturation, value);
+        float m = value - C;
+        setRed(Math.round((rgbModFromHSV[0]+m)*255));
+        setGreen(Math.round((rgbModFromHSV[1]+m)*255));
+        setBlue(Math.round((rgbModFromHSV[2]+m)*255));
+    }
+
+    public void setSaturation(float saturation) {
+        setHSV(getHue(), saturation, getValue());
+    }
+
+    public void setValue(float value) {
+        setHSV(getHue(), getSaturation(), value);
+    }
 	/**
 	 * Sets an attribute of the pixel
 	 * @param valueARGB the pixel's ARGB value
