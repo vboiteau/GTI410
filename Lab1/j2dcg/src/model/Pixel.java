@@ -260,6 +260,37 @@ public class Pixel {
 		valueARGB = (valueARGB & 0xffffff00) | ((valueBlue & 0xff));
 	}
 
+    public void setCMYK(float c, float m, float y, float k) {
+        setRed(Math.round(255 * (1-c) * (1-k)));
+        setGreen(Math.round(255 * (1-m) * (1-k)));
+        setBlue(Math.round(255 * (1-y) * (1-k)));
+    }
+
+    public float[] getCYMKRGBMod() {
+        return new float[]{
+            (float)getRed()/(float)255,
+            (float)getGreen()/(float)255,
+            (float)getBlue()/(float)255,
+        };
+    }
+
+    public float getBlack(){
+        float[] mods = getCYMKRGBMod();
+        return 1 - Math.max(Math.max(mods[0], mods[1]), mods[2]);
+    }
+
+    public float getCyan() {
+        return (1-getCYMKRGBMod()[0]-getBlack()) / (1-getBlack());
+    }
+
+    public float getMagenta() {
+        return (1-getCYMKRGBMod()[1]-getBlack()) / (1-getBlack());
+    }
+
+    public float getYellow() {
+        return (1-getCYMKRGBMod()[2]-getBlack()) / (1-getBlack());
+    }
+
 	/**
 	 * Object's toString() method redefinition
 	 */               
