@@ -291,6 +291,28 @@ public class Pixel {
         return (1-getCYMKRGBMod()[2]-getBlack()) / (1-getBlack());
     }
 
+    public void setYCbCr(int y, int cb, int cr) {
+        int red = Math.max(0, Math.min((int)(1*y+1.402*(cr-128)), 255));
+        int green = Math.max(0,Math.min((int)(1*y-0.344136*(cb-128)-0.714136*(cr-128)), 255));
+        int blue = Math.max(0, Math.min((int)((1*y+1.772*(cb-128))), 255));
+        System.out.printf("ycbcr(%d, %d, %d), rgb(%d, %d, %d)\n", y, cb, cr, red, blue, green);
+        setRed(red);
+        setGreen(green);
+        setBlue(blue);
+    }
+
+    public int getY() {
+        return (int)Math.round(0.299*getRed()+0.587*getGreen()+0.114*getBlue());
+    }
+
+    public int getCb() {
+        return (int)Math.round(128-0.168736*getRed()-0.331264*getGreen()+0.5*getBlue());
+    }
+
+    public int getCr() {
+        return (int)Math.round(128+0.5*getRed()-0.418688*getGreen()-0.081312*getBlue());
+    }
+
 	/**
 	 * Object's toString() method redefinition
 	 */               

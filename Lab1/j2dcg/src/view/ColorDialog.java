@@ -41,6 +41,7 @@ public class ColorDialog extends JDialog {
 	private JButton okButton;
 	private RGBColorMediator rgbMediator;
 	private HSVColorMediator hsvMediator;
+	private YCbCrColorMediator ycbcrMediator;
 	private CMYKColorMediator cmykMediator;
 	private ActionListener okActionListener;
 	private ColorDialogResult result;
@@ -146,7 +147,23 @@ public class ColorDialog extends JDialog {
 	}
 
 	private JPanel createYCbCrPanel(ColorDialogResult result, int imageWidths) {	
+		ycbcrMediator = new YCbCrColorMediator(result, imageWidths, 30);
+		
 		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		ColorSlider csY = new ColorSlider("Y:", result.getPixel().getY(), ycbcrMediator.getYImage());
+		ColorSlider csCr = new ColorSlider("Cb:", result.getPixel().getCb(), ycbcrMediator.getCbImage());
+		ColorSlider csCb = new ColorSlider("Cr:", result.getPixel().getCr(), ycbcrMediator.getCrImage());
+		
+		ycbcrMediator.setYCS(csY);
+		ycbcrMediator.setCbCS(csCb);
+		ycbcrMediator.setCrCS(csCr);
+		
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+		panel.add(csY);
+		panel.add(csCb);
+		panel.add(csCr);
 		
 		return panel;
 	}
