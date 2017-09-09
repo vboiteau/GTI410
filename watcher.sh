@@ -1,0 +1,9 @@
+#!/bin/bash
+if ! [ -x "$(command -v npm)" ]; then
+    echo 'Error: npm is not installed.' >&2
+    exit 1
+fi
+if ! [ -x "$(command -v onchange)" ]; then
+    npm i -g onchange
+fi
+onchange "./src/**/*.java" -- bash -c "gradle clean && gradle build && gradle run --info"

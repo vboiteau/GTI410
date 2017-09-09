@@ -46,7 +46,6 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 		hueImage = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
 		saturationImage = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
 		valueImage = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
-        System.out.printf("HSV in creation\n%d\t%.2f\t%.2f\n", hue, saturation, value);
 		computeHueImage(hue, saturation, value);
 		computeSaturationImage(hue, saturation, value);
 		computeValueImage(hue, saturation, value); 	
@@ -219,7 +218,6 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 		value = result.getPixel().getValue();
 		
 		hueCS.setValue(Math.round(hue*255/360));
-        System.out.printf("saturation %d value %d", Math.round(saturation*255), Math.round(value*255));
 		saturationCS.setValue(Math.round(saturation*255));
 		valueCS.setValue(Math.round(value*255));
 		computeHueImage(hue, saturation, value);

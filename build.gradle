@@ -1,1 +1,1 @@
-ant.importBuild 'j2dcg/build.xml'
+ant.importBuild 'build.xml'
