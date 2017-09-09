@@ -295,7 +295,6 @@ public class Pixel {
         int red = Math.max(0, Math.min((int)(1*y+1.402*(cr-128)), 255));
         int green = Math.max(0,Math.min((int)(1*y-0.344136*(cb-128)-0.714136*(cr-128)), 255));
         int blue = Math.max(0, Math.min((int)((1*y+1.772*(cb-128))), 255));
-        System.out.printf("ycbcr(%d, %d, %d), rgb(%d, %d, %d)\n", y, cb, cr, red, blue, green);
         setRed(red);
         setGreen(green);
         setBlue(blue);
