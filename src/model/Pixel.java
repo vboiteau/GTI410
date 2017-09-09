@@ -118,7 +118,7 @@ public class Pixel {
     }
 
     public int getRGBMax() {
-        return Math.max(getRed(), getGreen());
+        return Math.max(Math.max(getRed(), getGreen()), getBlue());
     }
 
     public int getRGBCoverage() {
@@ -127,17 +127,19 @@ public class Pixel {
 
     public float getHueModificatorFromRGB() {
         float mod;
-        System.out.println(getRGBMaxIndex());
         switch (getRGBMaxIndex()) {
             case 0:
-                mod = ((getGreen() - getBlue()) / getRGBCoverage()) % 6;
+                mod = (float)((getGreen() - getBlue()) / (float)getRGBCoverage());
+                if (mod < 0) {
+                   mod += 6; 
+                }
                 break;
             case 1:
-                mod = (getBlue() - getRed()) / getRGBCoverage() + 2;
+                mod = (float)(getBlue() - getRed()) / (float)getRGBCoverage() + 2;
                 break;
             case 2:
             default:
-                mod = (getRed() - getGreen()) / getRGBCoverage() + 4;
+                mod = (float)(getRed() - getGreen()) / (float)getRGBCoverage() + 4;
                 break;
         }
         return mod;
@@ -146,7 +148,7 @@ public class Pixel {
     public int getHue() {
         int C = getRGBCoverage();
         if (C > 0) {
-            return Math.round(getHueModificatorFromRGB() * 60);
+            return Math.max(0, Math.min(Math.round(getHueModificatorFromRGB() * 60), 360));
         }
         return C;
     }
@@ -165,7 +167,6 @@ public class Pixel {
 
     public float[] getRGBModFromHSV(int hue, float saturation, float value) {
         float C =  value * saturation;
-
         float X = C * (1 - Math.abs(((float)hue / (float)60)%2 - 1));
         float[] mod = new float[]{0, 0, 0};
         switch((int)Math.floor(((float)hue / (float)60))) {
@@ -342,5 +343,30 @@ public class Pixel {
     		return (((Pixel)o).getARGB() == getARGB());
     	}
     	return false;
+    }
+
+    public boolean compareHueThresholdOnTarget(Pixel target, int hueThreshold) {
+        return Math.abs(target.getHue() - getHue()) <= hueThreshold;
+    }
+
+    public boolean compareSaturationThresholdOnTarget(Pixel target, float saturationThreshold) {
+        return Math.abs(target.getSaturation() - getSaturation()) <= saturationThreshold;
+    }
+
+    public boolean compareValueThresholdOnTarget(Pixel target, float valueThreshold) {
+        return Math.abs(target.getValue() - getValue()) <= valueThreshold;
+    }
+
+    public boolean equalsWithHSVThresholds(Pixel target, int hueThreshold, float saturationThreshold, float valueThreshold) {
+        boolean isHueEqual = compareHueThresholdOnTarget(target, hueThreshold);
+        boolean isSaturationEqual = compareSaturationThresholdOnTarget(target, saturationThreshold);
+
+        boolean isValueEqual = compareValueThresholdOnTarget(target, valueThreshold);
+
+        return (
+            isHueEqual &&
+            isSaturationEqual &&
+            isValueEqual
+        );
     }
 }

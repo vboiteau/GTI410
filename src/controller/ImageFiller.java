@@ -99,12 +99,23 @@ public class ImageFiller extends AbstractTransformer {
             ) {
                 if ((
                     isFloodFill() &&
-                    currentImage.getPixel(current.x, current.y).equals(initialPixel)
+                    currentImage.getPixel(current.x, current.y).equalsWithHSVThresholds(
+                        initialPixel,
+                        getHueThreshold(),
+                        (float)getSaturationThreshold()/(float)255,
+                        (float)getValueThreshold()/(float)255
+                    )
                 ) || (
                     !isFloodFill() &&
-                    !currentImage.getPixel(current.x, current.y).equals(borderColor)
+                    !currentImage.getPixel(current.x, current.y).equalsWithHSVThresholds(
+                        borderColor,
+                        getHueThreshold(),
+                        (float)getSaturationThreshold()/(float)255,
+                        (float)getValueThreshold()/(float)255
+                    )
                 )) {
                     // Next points to fill.
+                    currentImage.setPixel(current.x, current.y, fillColor);
                     Point nextDown = new Point(current.x, current.y+1);
                     Point nextLeft = new Point(current.x-1, current.y);
                     Point nextRight = new Point(current.x+1, current.y);
@@ -113,8 +124,6 @@ public class ImageFiller extends AbstractTransformer {
                     stack.push(nextLeft);
                     stack.push(nextRight);
                     stack.push(nextUp);
-
-                    currentImage.setPixel(current.x, current.y, fillColor);
                 }
 			}
 		}
