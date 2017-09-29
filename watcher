@@ -6,4 +6,4 @@ fi
 if ! [ -x "$(command -v onchange)" ]; then
     npm i -g onchange
 fi
-onchange "./src/**/*.java" -- bash -c "gradle clean && gradle build && gradle run --info"
+onchange "./src/**/*.java" -- bash -c "./gradlew clean && ./gradlew build && ./gradlew run --info"
