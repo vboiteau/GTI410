@@ -127,13 +127,6 @@ public class ImageFiller extends AbstractTransformer {
                 }
 			}
 		}
-		// TODO EP In this method, we are creating many new Point instances. 
-		//      We could try to reuse as many as possible to be more efficient.
-		// TODO EP In this method, we could be creating many Point instances. 
-		//      At some point we can run out of memory. We could create a new point
-		//      class that uses shorts to cut the memory use.
-		// TODO EP In this method, we could test if a pixel needs to be filled before
-		//      adding it to the stack (to reduce memory needs and increase efficiency).
 	}
 	
 	/**
