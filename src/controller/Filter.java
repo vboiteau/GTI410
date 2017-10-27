@@ -24,7 +24,7 @@ import model.*;
  * @author unascribed
  * @version $Revision: 1.8 $
  */
-public class Filter {
+public abstract class Filter {
 	protected PaddingStrategy paddingStrategy;
 	protected ImageConversionStrategy conversionStrategy;
 
@@ -64,5 +64,7 @@ public class Filter {
 	public ImageConversionStrategy getImageConversionStrategy() {
 		return conversionStrategy;
 	}
-	
+
+    public void updateKernel(Coordinates coordinate, float value){
+    }
 }

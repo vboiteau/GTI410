@@ -31,16 +31,14 @@ import model.Shape;
  * @version $Revision: 1.6 $
  */
 public class FilteringTransformer extends AbstractTransformer{
-	Filter filter = new MeanFilter3x3(new PaddingZeroStrategy(), new ImageClampStrategy());
+	Filter filter = new CustomFilter3x3(new PaddingZeroStrategy(), new ImageClampStrategy());
 	
 	/**
 	 * @param _coordinates
 	 * @param _value
 	 */
 	public void updateKernel(Coordinates _coordinates, float _value) {
-		System.out.println("[" + (_coordinates.getColumn() - 1) + "]["
-                                   + (_coordinates.getRow() - 1) + "] = " 
-                                   + _value);
+        filter.updateKernel(_coordinates, _value);
 	}
 		
 	/**
@@ -78,7 +76,11 @@ public class FilteringTransformer extends AbstractTransformer{
 	 * @param string
 	 */
 	public void setBorder(String string) {
-		System.out.println(string);
+        if (string == "Mirror") {
+           filter.setPaddingStrategy(new MirrorStrategy());
+        } else {
+           filter.setPaddingStrategy(new PaddingZeroStrategy());
+        }
 	}
 
 	/**
