@@ -87,6 +87,10 @@ public class FilteringTransformer extends AbstractTransformer{
 	 * @param string
 	 */
 	public void setClamp(String string) {
-		System.out.println(string);
+        if (string == "Abs and normalize to 255") {
+            filter.setImageConversionStrategy(new ImageAbsAndNormalizeTo255Strategy());
+        } else {
+            filter.setImageConversionStrategy(new ImageClampStrategy());
+        }
 	}
 }
