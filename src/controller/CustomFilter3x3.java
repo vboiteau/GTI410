@@ -75,7 +75,7 @@ public class CustomFilter3x3 extends Filter {
 		return conversionStrategy.convert(filtered);		
 	}
 	
-	/*
+	/**
 	 * Filter Implementation 
 	 */
 	private ImageDouble filter(ImageDouble image) {
@@ -141,6 +141,11 @@ public class CustomFilter3x3 extends Filter {
 		return newImage;
 	}
 
+    /**
+     * Update the kernel that will be applied on everry pixels of the image.
+     * @param coordinates Coordinates used
+     * @param value float value
+     */
     public void updateKernel(Coordinates coordinates, float value) {
         int row = coordinates.getRow() - 1;
         int column = coordinates.getColumn() - 1;

@@ -32,6 +32,9 @@ public class ImageAbsAndNormalizeTo255Strategy extends ImageConversionStrategy {
         return normalizeImageXTo255(image, findHighestPixel(image));
 	}
 
+    /**
+     * Find the pixel with the highest combination of color in the image.
+     */
     private PixelDouble findHighestPixel(ImageDouble image) {
         int width = image.getImageWidth();
         int height = image.getImageHeight();
@@ -49,12 +52,18 @@ public class ImageAbsAndNormalizeTo255Strategy extends ImageConversionStrategy {
         return highest;
     }
 
+    /**
+     * Check if the combination of color is higher than the current highest.
+     */
     private Boolean pixelIsBiggerThan(PixelDouble current, PixelDouble highest) {
         return (Math.abs(current.getRed()) > highest.getRed() &&
                 current.getGreen() > highest.getGreen() &&
                 current.getBlue() > highest.getBlue());
     }
 
+    /**
+     * Force absolute values for each color of a pixel.
+     */
     private PixelDouble absOnPixelDouble(PixelDouble pixel) {
         pixel.setRed(Math.abs(pixel.getRed()));
         pixel.setGreen(Math.abs(pixel.getGreen()));
@@ -62,6 +71,9 @@ public class ImageAbsAndNormalizeTo255Strategy extends ImageConversionStrategy {
         return pixel;
     }
 
+    /**
+     * Normalize every pixel of an image to highest color combination pixel.
+     */
     private ImageX normalizeImageXTo255(ImageDouble image, PixelDouble highest){
 		int width = image.getImageWidth();
 		int height = image.getImageHeight();
@@ -77,13 +89,19 @@ public class ImageAbsAndNormalizeTo255Strategy extends ImageConversionStrategy {
 		newImage.endPixelUpdate();
 		return newImage;
     }
-	
+
+    /**
+     * Normalize pixel to the highest combination of colors.
+     */ 
 	private Pixel normalizePixelTo255(PixelDouble current, PixelDouble highest) {
 		return new Pixel(normalizeValueTo255(Math.abs(current.getRed()), highest.getRed()),
                 normalizeValueTo255(Math.abs(current.getGreen()), highest.getGreen()),
                 normalizeValueTo255(Math.abs(current.getBlue()), highest.getBlue()));
 	}
 
+    /**
+     * Normalize a value to the highest value, basic rule of 3.
+     */
     private int normalizeValueTo255(double currentValue, double highestValue) {
         return (int) (255.0 * currentValue / highestValue);
     }
