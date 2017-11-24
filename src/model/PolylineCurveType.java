@@ -29,6 +29,7 @@ public class PolylineCurveType extends CurveType {
 
 	public PolylineCurveType(String name) {
 		super(name);
+        this.alignable = false;
 	}
 	
 	/* (non-Javadoc)
@@ -75,7 +76,7 @@ public class PolylineCurveType extends CurveType {
 			return new Point(x,y);
 		}
 	}
-	
+
 	private List linearMatrix = 
 		Matrix.buildMatrix2( -1, 1,
 							  1, 0);

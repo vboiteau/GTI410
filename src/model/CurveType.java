@@ -32,6 +32,9 @@ public abstract class CurveType {
 	public abstract int getNumberOfSegments(int numberOfControlPoints);
 	public abstract int getNumberOfControlPointsPerSegment();
 	public abstract ControlPoint getControlPoint(List controlPoints, int segmentNumber, int controlPointNumber);
+    public boolean canAlign() {
+        return this.alignable;
+    }
 	public double getMinT(int segmentNumber) {return 0;};
 	public double getMaxT(int segmentNumber) {return 1;};
 	public abstract Point evalCurveAt(List controlPoints, double t);
@@ -39,4 +42,5 @@ public abstract class CurveType {
 		return name;
 	}
 	private String name;
+    protected boolean alignable = true;
 }

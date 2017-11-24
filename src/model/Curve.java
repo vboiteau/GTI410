@@ -160,6 +160,10 @@ public class Curve extends ShapeContainer implements ColoredShapeIF {
 		return numberOfSections;
 	}
 
+    public boolean canAlign() {
+        return curveType.canAlign();
+    }
+
 	/**
 	 * @param i
 	 */
@@ -211,7 +215,7 @@ public class Curve extends ShapeContainer implements ColoredShapeIF {
     	}
     	rectangle = new Rectangle(minX, minY, maxX - minX, maxY - minY);
     }
-    
+
     public List computeLineSections(int segmentNumber){
     	List sections = new ArrayList(numberOfSections + 1);
     	double t = curveType.getMinT(segmentNumber);
@@ -324,7 +328,7 @@ public class Curve extends ShapeContainer implements ColoredShapeIF {
         recomputeLineSegments();
         super.setMemento(m.getParent());
     }
-    
+
     /** Supports undo. */
     private static class CurveMemento implements MementoIF {
         private final MementoIF parent;

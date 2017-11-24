@@ -15,19 +15,23 @@
 package controller;
 
 import java.awt.event.MouseEvent;
+import java.awt.Point;
 import java.util.List;
 
 import view.Application;
 import view.CurvesPanel;
 
 import model.BezierCurveType;
+import model.BSplineCurveType;
 import model.ControlPoint;
 import model.Curve;
 import model.CurvesModel;
 import model.DocObserver;
 import model.Document;
+import model.HermiteCurveType;
 import model.PolylineCurveType;
 import model.Shape;
+import model.Line;
 
 /**
  * <p>Title: Curves</p>
@@ -105,7 +109,11 @@ public class Curves extends AbstractTransformer implements DocObserver {
 			curve.setCurveType(new BezierCurveType(CurvesModel.BEZIER));
 		} else if (string == CurvesModel.LINEAR) {
 			curve.setCurveType(new PolylineCurveType(CurvesModel.LINEAR));
-		} else {
+		} else if (string == CurvesModel.HERMITE) {
+			curve.setCurveType(new HermiteCurveType(CurvesModel.HERMITE));
+		} else if (string == CurvesModel.BSPLINE) {
+			curve.setCurveType(new BSplineCurveType(CurvesModel.BSPLINE));
+        } else {
 			System.out.println("Curve type [" + string + "] is unknown.");
 		}
 	}
@@ -117,8 +125,49 @@ public class Curves extends AbstractTransformer implements DocObserver {
 			if (selectedObjects.size() > 0){
 				Shape s = (Shape)selectedObjects.get(0);
 				if (curve.getShapes().contains(s)){
-					int controlPointIndex = curve.getShapes().indexOf(s);
-					System.out.println("Try to apply G1 continuity on control point [" + controlPointIndex + "]");
+					int targetIndex = curve.getShapes().indexOf(s);
+                    int previousIndex = targetIndex - 1;
+                    int nextIndex = targetIndex + 1;
+
+                    if (!curve.canAlign()) {
+                        System.out.format("Point on curve type %s can't be realigned.\n", curve.getCurveType());
+                        return;
+                    }
+
+                    if (previousIndex < 0) {
+                        System.out.println("Can't align first point of curve"); 
+                        return;
+                    }
+
+                    if (nextIndex >= curve.getShapes().size()) {
+                        System.out.println("Can't align last point of curve"); 
+                        return;
+                    }
+
+                    Point previous = ((ControlPoint) curve.getShapes().get(previousIndex)).getCenter();
+                    Point target = ((ControlPoint) curve.getShapes().get(targetIndex)).getCenter();
+                    Point next = ((ControlPoint) curve.getShapes().get(nextIndex)).getCenter();
+
+                    Line previousLine = new Line(previous, target);
+                    Line nextLine = new Line(target, next);
+
+                    double previousNorm = previousLine.getNorm();
+                    double nextNorm = nextLine.getNorm();
+
+
+                    double previousWidthWeight = previousLine.getWidth() / previousNorm;
+                    double previousHeightWeight = previousLine.getHeight() / previousNorm;
+
+                    int x = (int) (target.x + Math.round(nextNorm * previousWidthWeight));
+                    int y = (int) (target.y + Math.round(nextNorm * previousHeightWeight));
+
+                    System.out.format("point\tx\ty\nprevious\t%d\t%d\ntarget\t%d\t%d\nnext\t\t%d\t%d\nmoved\t%d\t%d\n\n", previous.x, previous.y, target.x, target.y, next.x, next.y, x, y);
+
+                    Point movedPoint = new Point(x, y);
+
+                    ((ControlPoint) curve.getShapes().get(nextIndex)).setCenter(movedPoint);
+                    
+                    curve.update();
 				}
 			}
 			
@@ -132,8 +181,44 @@ public class Curves extends AbstractTransformer implements DocObserver {
 			if (selectedObjects.size() > 0){
 				Shape s = (Shape)selectedObjects.get(0);
 				if (curve.getShapes().contains(s)){
-					int controlPointIndex = curve.getShapes().indexOf(s);
-					System.out.println("Try to apply C1 continuity on control point [" + controlPointIndex + "]");
+					int targetIndex = curve.getShapes().indexOf(s);
+                    int previousIndex = targetIndex - 1;
+                    int nextIndex = targetIndex + 1;
+
+                    if (!curve.canAlign()) {
+                        System.out.format("Point on curve type %s can't be realigned symetric.\n\n", curve.getCurveType());
+                        return;
+                    }
+
+                    if (previousIndex < 0) {
+                        System.out.println("Can't align first point of curve"); 
+                        return;
+                    }
+
+                    if (nextIndex >= curve.getShapes().size()) {
+                        System.out.println("Can't align last point of curve"); 
+                        return;
+                    }
+
+                    Point previous = ((ControlPoint) curve.getShapes().get(previousIndex)).getCenter();
+                    Point target = ((ControlPoint) curve.getShapes().get(targetIndex)).getCenter();
+
+                    Line previousLine = new Line(previous, target);
+
+                    double previousNorm = previousLine.getNorm();
+
+
+                    double previousWidthWeight = previousLine.getWidth() / previousNorm;
+                    double previousHeightWeight = previousLine.getHeight() / previousNorm;
+
+                    int x = (int) (target.x + Math.round(previousNorm * previousWidthWeight));
+                    int y = (int) (target.y + Math.round(previousNorm * previousHeightWeight));
+
+                    Point movedPoint = new Point(x, y);
+
+                    ((ControlPoint) curve.getShapes().get(nextIndex)).setCenter(movedPoint);
+                    
+                    curve.update();
 				}
 			}
 			
