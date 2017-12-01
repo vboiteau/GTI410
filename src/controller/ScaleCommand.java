@@ -14,7 +14,12 @@
 */
 package controller;
 
+import java.awt.Point;
+import java.awt.geom.AffineTransform;
+import java.util.Iterator;
 import java.util.List;
+
+import model.Shape;
 
 /**
  * <p>Title: ScaleCommand</p>
@@ -42,8 +47,20 @@ public class ScaleCommand extends AnchoredTransformationCommand {
 	 * @see controller.Command#execute()
 	 */
 	public void execute() {
-		System.out.println("command: scaling x by " + sx +
-                           " and y by " + sy + " ; anchored on " + getAnchor() );
+		Iterator iter = objects.iterator();
+		Shape shape;
+        Point anchorPoint = getAnchorPoint(objects);
+        double x = anchorPoint.getX();
+        double y = anchorPoint.getY();
+		while(iter.hasNext()){
+			shape = (Shape)iter.next();
+			mt.addMememto(shape);
+			AffineTransform t = shape.getAffineTransform();
+            t.translate(x, y);
+			t.scale(sx,sy);
+            t.translate(-x, -y);
+			shape.setAffineTransform(t);
+		}
 
 		// voluntarily undefined
 	}

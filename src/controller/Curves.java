@@ -228,7 +228,7 @@ public class Curves extends AbstractTransformer implements DocObserver {
                     int newY = (int) (target.y + Math.round(previousNorm * previousHeightWeight));
 
                     // create moved next point
-                    Point movedPoint = new Point(x, y);
+                    Point movedPoint = new Point(newX, newY);
 
                     // overrun next point
                     ((ControlPoint) curve.getShapes().get(nextIndex)).setCenter(movedPoint);

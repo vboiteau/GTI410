@@ -14,7 +14,12 @@
 */
 package controller;
 
+import java.awt.Point;
+import java.awt.geom.AffineTransform;
+import java.util.Iterator;
 import java.util.List;
+
+import model.Shape;
 
 /**
  * <p>Title: ShearYCommand</p>
@@ -40,10 +45,23 @@ public class ShearYCommand extends AnchoredTransformationCommand {
 	 * @see controller.Command#execute()
 	 */
 	public void execute() {
-		System.out.println("command: shearing on y-axis to " + angleDegrees +
-				           " degrees anchored on " + getAnchor());
-				           		
-		// voluntarily undefined
+        System.out.println("Shearing Y");
+		Iterator iter = objects.iterator();
+		Shape shape;
+        Point anchorPoint = getAnchorPoint(objects);
+        double x = anchorPoint.getX();
+        double y = anchorPoint.getY();
+        double shy = Math.toRadians(angleDegrees);
+        System.out.format("shearing y %.2f\n", shy);
+		while(iter.hasNext()){
+			shape = (Shape)iter.next();
+			mt.addMememto(shape);
+			AffineTransform t = shape.getAffineTransform();
+            t.translate(x, y);
+			t.shear(0, shy);
+            t.translate(-x, -y);
+			shape.setAffineTransform(t);
+		}
 	}
 
 	/* (non-Javadoc)
