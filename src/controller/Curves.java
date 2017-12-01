@@ -118,6 +118,7 @@ public class Curves extends AbstractTransformer implements DocObserver {
 		}
 	}
 	
+    // Align around control ppoint
 	public void alignControlPoint() {
 		if (curve != null) {
 			Document doc = Application.getInstance().getActiveDocument();
@@ -125,10 +126,12 @@ public class Curves extends AbstractTransformer implements DocObserver {
 			if (selectedObjects.size() > 0){
 				Shape s = (Shape)selectedObjects.get(0);
 				if (curve.getShapes().contains(s)){
+                    // initialize indexes
 					int targetIndex = curve.getShapes().indexOf(s);
                     int previousIndex = targetIndex - 1;
                     int nextIndex = targetIndex + 1;
 
+                    // validate that continuity can be applied
                     if (!curve.canAlign()) {
                         System.out.format("Point on curve type %s can't be realigned.\n", curve.getCurveType());
                         return;
@@ -144,27 +147,32 @@ public class Curves extends AbstractTransformer implements DocObserver {
                         return;
                     }
 
+                    // get points
                     Point previous = ((ControlPoint) curve.getShapes().get(previousIndex)).getCenter();
                     Point target = ((ControlPoint) curve.getShapes().get(targetIndex)).getCenter();
                     Point next = ((ControlPoint) curve.getShapes().get(nextIndex)).getCenter();
 
+                    // Create line
                     Line previousLine = new Line(previous, target);
                     Line nextLine = new Line(target, next);
 
+                    // Get segments norms
                     double previousNorm = previousLine.getNorm();
                     double nextNorm = nextLine.getNorm();
 
 
+                    // get previous axes ponderations
                     double previousWidthWeight = previousLine.getWidth() / previousNorm;
                     double previousHeightWeight = previousLine.getHeight() / previousNorm;
 
-                    int x = (int) (target.x + Math.round(nextNorm * previousWidthWeight));
-                    int y = (int) (target.y + Math.round(nextNorm * previousHeightWeight));
+                    // get coord of next point
+                    int newX = (int) (target.x + Math.round(nextNorm * previousWidthWeight));
+                    int newY = (int) (target.y + Math.round(nextNorm * previousHeightWeight));
 
-                    System.out.format("point\tx\ty\nprevious\t%d\t%d\ntarget\t%d\t%d\nnext\t\t%d\t%d\nmoved\t%d\t%d\n\n", previous.x, previous.y, target.x, target.y, next.x, next.y, x, y);
+                    // create moved next point
+                    Point movedPoint = new Point(newX, newY);
 
-                    Point movedPoint = new Point(x, y);
-
+                    // overrun next point
                     ((ControlPoint) curve.getShapes().get(nextIndex)).setCenter(movedPoint);
                     
                     curve.update();
@@ -174,6 +182,7 @@ public class Curves extends AbstractTransformer implements DocObserver {
 		}
 	}
 	
+    // apply symetry around control point
 	public void symetricControlPoint() {
 		if (curve != null) {
 			Document doc = Application.getInstance().getActiveDocument();
@@ -181,10 +190,12 @@ public class Curves extends AbstractTransformer implements DocObserver {
 			if (selectedObjects.size() > 0){
 				Shape s = (Shape)selectedObjects.get(0);
 				if (curve.getShapes().contains(s)){
+                    // initialize indexes
 					int targetIndex = curve.getShapes().indexOf(s);
                     int previousIndex = targetIndex - 1;
                     int nextIndex = targetIndex + 1;
 
+                    // validate that continuity can be applied
                     if (!curve.canAlign()) {
                         System.out.format("Point on curve type %s can't be realigned symetric.\n\n", curve.getCurveType());
                         return;
@@ -200,22 +211,26 @@ public class Curves extends AbstractTransformer implements DocObserver {
                         return;
                     }
 
+                    // get previous point and line
                     Point previous = ((ControlPoint) curve.getShapes().get(previousIndex)).getCenter();
                     Point target = ((ControlPoint) curve.getShapes().get(targetIndex)).getCenter();
-
                     Line previousLine = new Line(previous, target);
 
+                    // get previous norm
                     double previousNorm = previousLine.getNorm();
 
-
+                    // get previous axes ponderations
                     double previousWidthWeight = previousLine.getWidth() / previousNorm;
                     double previousHeightWeight = previousLine.getHeight() / previousNorm;
 
-                    int x = (int) (target.x + Math.round(previousNorm * previousWidthWeight));
-                    int y = (int) (target.y + Math.round(previousNorm * previousHeightWeight));
+                    // get coord of next point
+                    int newX = (int) (target.x + Math.round(previousNorm * previousWidthWeight));
+                    int newY = (int) (target.y + Math.round(previousNorm * previousHeightWeight));
 
+                    // create moved next point
                     Point movedPoint = new Point(x, y);
 
+                    // overrun next point
                     ((ControlPoint) curve.getShapes().get(nextIndex)).setCenter(movedPoint);
                     
                     curve.update();
